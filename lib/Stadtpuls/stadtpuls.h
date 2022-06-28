@@ -7,7 +7,7 @@
 #define STADTPULS_H
 
 #include <Arduino.h>
-#include <Wifi.h>
+#include <WiFi.h>
 #include <SPIFFS.h>
 #include <WiFiClientSecure.h>
 #include <AsyncTCP.h>
