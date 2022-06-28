@@ -4,7 +4,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# {repo-template}
+# Stadtpuls.com ESP32 Assistant
 
 <!--
 
@@ -46,20 +46,36 @@ Read more here https://allcontributors.org/
 Get fancy shields at https://shields.io
  -->
 
-Add your project description here
 
 ## Prerequisites
 
+- PlatformIO
+- currently only tested on **Heltec ESP32-LoRa-V2** we might add other ESP32 flavors in the future
+
 ## Installation
 
-## Usage or Deployment
+```bash
+pio pkg install
+```
 
-## Development
+## Usage and Deployment
+
+```bash
+# copy the content of the data folder to the board
+pio run --target uploadfs
+# compile the code and upload it to the board
+pio run --target upload
+# monitor the boards serial output
+pio device monitor -b115200
+```
+
 
 ## Tests
 
+:(
 ## Contributing
 
+Please open an issue before creating a pull request. We will add some issues with the tag `good first issue` to mark the things that need to be done. 
 ## Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -82,11 +98,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-## Content Licencing
-
-Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3.0/de/).
-
-Illustrations by Maria Musterfrau, all rights reserved.
 
 ## Credits
 
