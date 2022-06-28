@@ -29,5 +29,4 @@ jobs:
         pip install --upgrade platformio
     - name: Run PlatformIO
       run: |
-        # cp src/env_sample.h src/env.h
         pio run
