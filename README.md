@@ -49,8 +49,8 @@ Get fancy shields at https://shields.io
 
 ## Prerequisites
 
-- PlatformIO
-- currently only tested on **Heltec ESP32-LoRa-V2** we might add other ESP32 flavors in the future
+- [PlatformIO](https://platformio.org/)
+- currently only tested on [Heltec ESP32-LoRa-V2](https://heltec.org/project/wifi-lora-32/) we might add other ESP32 flavors in the future. It should work with all ESP32 Boards that have WiFi. 
 
 ## Installation
 
