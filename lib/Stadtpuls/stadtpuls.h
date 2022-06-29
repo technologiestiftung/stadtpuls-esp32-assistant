@@ -16,14 +16,15 @@
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
 #include "stadtpuls_util.h"
+#include "grfx.h"
 
 #define SSD1306_NO_SPLASH 1           // remove the adafruit splash screen from the display
-#define STADTPULS_SCREEN_WIDTH 128    // OLED display width, in pixels
-#define STADTPULS_SCREEN_HEIGHT 64    // OLED display height, in pixels
-#define STADTPULS_OLED_RESET 16       // Reset pin # (or -1 if sharing Arduino reset pin)
+#define STADTPULS_SCREEN_WIDTH 128    // SCREEN display width, in pixels
+#define STADTPULS_SCREEN_HEIGHT 64    // SCREEN display height, in pixels
+#define STADTPULS_SCREEN_RESET 16     // Reset pin # (or -1 if sharing Arduino reset pin)
 #define STADTPULS_SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32 aaaaaaarrrrrggggghhhhh this is the other way around
-#define STADTPULS_I2C_OLED_SDA_PIN 4
-#define STADTPULS_I2C_OLED_SCL_PIN 15
+#define STADTPULS_I2C_SCREEN_SDA_PIN 4
+#define STADTPULS_I2C_SCREEN_SCL_PIN 15
 #define STADTPULS_FORGET_PIN 33
 #define STADTOPULS_FORGET_DELAY_MS 5000
 #define STADTPULS_PRO_BUTTON_PIN 0 // useing the button for mode switches
@@ -31,23 +32,35 @@
 
 #define STADTPULS_SERVER "api.stadtpuls.com"
 
+struct Stadtpuls_Display_Options
+{
+};
 struct Stadtpuls_Options
 {
-  bool debug;
-  String sensor_name;
-  String ssid;
-  String password;
-  String sensor_id;
-  String auth_token;
-  String server;
-  int forget_pin;
-  bool use_display;
+  bool debug = false;
+  String sensor_name = "Stadtpuls";
+  String ssid = "";
+  String password = "";
+  String sensor_id = "";
+  String auth_token = "";
+  String server = "api.stadtpuls.com";
+  bool check_certificate = true;
+  int8_t forget_pin = STADTPULS_FORGET_PIN;
+  // display options
+  bool use_display = false;
+  bool show_splash = true;
+  int16_t screen_width = STADTPULS_SCREEN_WIDTH;
+  int16_t screen_height = STADTPULS_SCREEN_HEIGHT;
+  int8_t screen_reset = STADTPULS_SCREEN_RESET;
+  uint8_t screen_address = STADTPULS_SCREEN_ADDRESS;
+  int8_t i2c_screen_sda_pin = STADTPULS_I2C_SCREEN_SDA_PIN;
+  int8_t i2c_screen_scl_pin = STADTPULS_I2C_SCREEN_SCL_PIN;
 };
 class Stadtpuls
 {
 public:
   Stadtpuls();
-
+  Grfx grfx;
   void begin(Stadtpuls_Options options);
   void listen();
   void send(std::vector<double> measurements);
@@ -88,8 +101,8 @@ private:
   String auth_token = "";
   String sensor_id = "";
   String ap_ip;
-  int forget_pin;
-  static String sensor_name;
+  int forget_pin = STADTPULS_FORGET_PIN;
+  String sensor_name;
   Preferences preferences;
   const char *prefs_credentials_key = "puls_wifi_creds";
   const char *prefs_mode_key = "puls_curr_mode";
@@ -100,7 +113,10 @@ private:
   const char *prefs_ssid_key = "ssid";
   bool wifi_active = false;
   bool setup_access_point = true;
-  bool PRINT;
+  bool PRINT = false;
+  bool check_cert = false;
+  bool use_display = false;
+  bool screen_active = false;
   static String processor(const String &var);
 };
 

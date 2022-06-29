@@ -9,8 +9,17 @@ const char *PARAM_PASSWORD = "password";
 const char *PARAM_SENSOR_ID = "sensorid";
 const char *PARAM_AUTH_TOKEN = "authtoken";
 AsyncWebServer ap_server(80);
+TwoWire I2C_OLED = TwoWire(0);
+Adafruit_SSD1306 display;
+
 WiFiClientSecure client;
-String Stadtpuls::sensor_name = "STADTPULS_ESP32";
+String sensor_name = "Stadtpuls";
+String processor_sensor_name = "Stadtpuls";
+String processor_ssid = "";
+String processor_password = "";
+String processor_sensor_id = "";
+String processor_auth_token = "";
+
 Stadtpuls::Stadtpuls()
 {
 
@@ -27,6 +36,47 @@ void Stadtpuls::begin(Stadtpuls_Options options)
   //  defined( WIFI_Kit_32 ) || defined( WIFI_LoRa_32 )
 #warnings "This library is not tested with your board proceed at own risk"
 #endif
+
+  if (options.debug)
+  {
+    Serial.println("-----------------------");
+    Serial.println("current configruation");
+    Serial.println("Options do not reflect data stored in flash memory");
+    Serial.println("ssid, password, sensor_id and auth_token will be loaded from preferences");
+    Serial.print("options.sensor_name: ");
+    Serial.println(options.sensor_name);
+    Serial.print("options.ssid: ");
+    Serial.println(options.ssid);
+    Serial.print("options.password: ");
+    Serial.println(options.password);
+    Serial.print("options.sensor_id: ");
+    Serial.println(options.sensor_id);
+    Serial.print("options.auth_token: ");
+    Serial.println(options.auth_token);
+    Serial.print("options.server: ");
+    Serial.println(options.server);
+    Serial.print("options.check_certificate: ");
+    Serial.println(options.check_certificate);
+    Serial.print("options.forget_pin: ");
+    Serial.println(options.forget_pin);
+    Serial.print("options.use_display: ");
+    Serial.println(options.use_display);
+    Serial.print("options.show_splash: ");
+    Serial.println(options.show_splash);
+    Serial.print("options.screen_width: ");
+    Serial.println(options.screen_width);
+    Serial.print("options.screen_height: ");
+    Serial.println(options.screen_height);
+    Serial.print("options.screen_reset: ");
+    Serial.println(options.screen_reset);
+    Serial.print("options.i2c_screen_sda_pin: ");
+    Serial.println(options.i2c_screen_sda_pin);
+    Serial.print("options.i2c_screen_scl_pin: ");
+    Serial.println(options.i2c_screen_scl_pin);
+    Serial.print("options.debug: ");
+    Serial.println(options.debug);
+    Serial.println("-----------------------");
+  }
   // options parsing
   if (options.sensor_name.length() > 0)
   {
@@ -52,19 +102,14 @@ void Stadtpuls::begin(Stadtpuls_Options options)
   {
     forget_pin = options.forget_pin;
   }
-  else
-  {
-    forget_pin = STADTPULS_FORGET_PIN;
-  }
   if (options.server.length() > 0)
   {
     server = options.server;
   }
-  else
+  if (options.check_certificate)
   {
-    server = STADTPULS_SERVER;
+    check_cert = true;
   }
-
   if (options.debug == true)
   {
     Serial.println("Debug mode enabled");
@@ -74,30 +119,98 @@ void Stadtpuls::begin(Stadtpuls_Options options)
   {
     PRINT = false;
   }
+  if (options.use_display == true)
+  {
+    use_display = true;
+  }
 
+  // end options parsing
   pinMode(forget_pin, INPUT_PULLDOWN);
-  client.setCACert(root_ca);
+  digitalWrite(forget_pin, LOW);
 
+  if (use_display == true)
+  {
+
+    // display setup
+    I2C_OLED.begin(
+        options.i2c_screen_sda_pin,
+        options.i2c_screen_scl_pin);
+    display = Adafruit_SSD1306(
+        options.screen_width,
+        options.screen_height,
+        &I2C_OLED,
+        options.screen_reset);
+    bool display_status = display.begin(SSD1306_SWITCHCAPVCC, options.screen_address);
+    if (!display_status)
+    {
+      if (PRINT)
+      {
+        Serial.println("Could not find OLED display");
+      }
+    }
+    else
+    {
+      screen_active = true;
+      grfx.begin(&display, &screen_active);
+      if (options.show_splash == true)
+      {
+        grfx.splash(1000);
+      }
+    }
+  }
+  // wifi setup
   if (PRINT)
   {
     WiFi.onEvent(stadtpuls_WiFiEvent);
   }
 
   Stadtpuls::preferences.begin(Stadtpuls::prefs_credentials_key, false);
-  if (ssid == "" || password == "" || sensor_id == "" || auth_token == "")
+  if (ssid == "")
   {
     ssid = Stadtpuls::preferences.getString(prefs_ssid_key, "");
+  }
+  else
+  { //
+    Stadtpuls::preferences.putString(prefs_ssid_key, ssid);
+  }
+  if (password == "")
+  {
     password = Stadtpuls::preferences.getString(prefs_password_key, "");
+  }
+  else
+  {
+    Stadtpuls::preferences.putString(prefs_password_key, password);
+  }
+  if (sensor_id == "")
+  {
     sensor_id = Stadtpuls::preferences.getString(prefs_sensor_id_key, "");
+  }
+  else
+  {
+    Stadtpuls::preferences.putString(prefs_sensor_id_key, sensor_id);
+  }
+  if (auth_token == "")
+  {
     auth_token = Stadtpuls::preferences.getString(prefs_auth_token_key, "");
   }
   else
   {
-    Stadtpuls::preferences.putString(prefs_ssid_key, ssid);
-    Stadtpuls::preferences.putString(prefs_password_key, password);
-    Stadtpuls::preferences.putString(prefs_sensor_id_key, sensor_id);
     Stadtpuls::preferences.putString(prefs_auth_token_key, auth_token);
   }
+
+  // if (ssid == "" || password == "" || sensor_id == "" || auth_token == "")
+  // {
+  //   password = Stadtpuls::preferences.getString(prefs_password_key, "");
+  //   sensor_id = Stadtpuls::preferences.getString(prefs_sensor_id_key, "");
+  //   auth_token = Stadtpuls::preferences.getString(prefs_auth_token_key, "");
+  // }
+  // else
+  // {
+  //   Stadtpuls::preferences.putString(prefs_ssid_key, ssid);
+  //   Stadtpuls::preferences.putString(prefs_password_key, password);
+  //   Stadtpuls::preferences.putString(prefs_sensor_id_key, sensor_id);
+  //   Stadtpuls::preferences.putString(prefs_auth_token_key, auth_token);
+  // }
   Stadtpuls::preferences.end();
   int no_wifi_count = 0;
   WiFi.mode(WIFI_STA);
@@ -212,9 +325,13 @@ void Stadtpuls::begin(Stadtpuls_Options options)
       }
       Stadtpuls::preferences.begin(prefs_credentials_key, false);
       Stadtpuls::preferences.putString(prefs_ssid_key, user_ssid);
+      processor_ssid = user_ssid;
       Stadtpuls::preferences.putString(prefs_password_key, user_password);
+      processor_password = user_password;
       Stadtpuls::preferences.putString(prefs_auth_token_key, user_auth_token);
+      processor_auth_token = user_auth_token;
       Stadtpuls::preferences.putString(prefs_sensor_id_key, user_sensor_id);
+      processor_sensor_id = user_sensor_id;
       Stadtpuls::preferences.end();
       if(PRINT){
       Serial.println("ssid: " + user_ssid);
@@ -355,15 +472,12 @@ void Stadtpuls::send(std::vector<double> measurements)
 String Stadtpuls::processor(const String &var)
 {
 
-  // preferences.begin(Stadtpuls::prefs_credentials_key, false);
-
-  String new_ssid = "";
-  // preferences.getString(prefs_ssid_key, "");
-  String new_password = "";
+  String new_ssid = processor_ssid;
+  String new_password = processor_password;
   // preferences.getString(prefs_password_key, "");
-  String name = sensor_name;
-  String auth_token = "";
-  String sensor_id = "";
+  String name = processor_sensor_name;
+  String auth_token = processor_auth_token;
+  String sensor_id = processor_sensor_id;
   // preferences.getString("name", "");
   Serial.println(var);
   if (var == "SSID")
