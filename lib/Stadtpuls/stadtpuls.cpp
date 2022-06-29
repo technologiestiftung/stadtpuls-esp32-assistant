@@ -25,6 +25,12 @@ Stadtpuls::Stadtpuls()
 
   // Constructor
 }
+
+void Stadtpuls::begin()
+{
+  Stadtpuls_Options options;
+  begin(options);
+}
 void Stadtpuls::begin(Stadtpuls_Options options)
 {
 #if defined(WIFI_LoRa_32_V2)

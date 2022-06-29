@@ -61,6 +61,7 @@ class Stadtpuls
 public:
   Stadtpuls();
   Grfx grfx;
+  void begin();
   void begin(Stadtpuls_Options options);
   void listen();
   void send(std::vector<double> measurements);
