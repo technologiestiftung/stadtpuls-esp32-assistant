@@ -263,19 +263,34 @@ void Stadtpuls::send(std::vector<double> measurements)
       return;
     }
     String m = "";
-    for (auto it : measurements)
+    for (std::size_t i = 0; i < measurements.size(); ++i)
     {
-      if (it != measurements.size())
+      if (i != measurements.size() - 1)
       {
-        m += String(measurements[it]) + ",";
+        m += clear_pad(measurements[i]) + ", ";
       }
       else
       {
-        m += String(measurements[it]);
+        m += clear_pad(measurements[i]);
       }
     }
 
     String payload = "{\"measurements\": [" + m + "], \"sensor_name\": \"" + sensor_name + "\"}";
+    if (PRINT)
+    {
+      Serial.print("payload: ");
+      Serial.println(payload);
+    }
+    if (check_cert == true)
+    {
+
+      client.setCACert(root_ca);
+    }
+    else
+    {
+
+      client.setInsecure();
+    }
     if (!client.connect(server.c_str(), 443))
     {
       if (PRINT)

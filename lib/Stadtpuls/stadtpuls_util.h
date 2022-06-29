@@ -10,9 +10,10 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <iomanip>
 #include "stadtpuls.h"
 
 void stadtpuls_WiFiEvent(WiFiEvent_t event);
 void not_found(AsyncWebServerRequest *request);
-
+String clear_pad(double value);
 #endif
