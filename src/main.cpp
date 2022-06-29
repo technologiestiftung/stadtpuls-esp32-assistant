@@ -40,7 +40,8 @@ void setup()
   // options.i2c_screen_scl_pin = STADTPULS_I2C_SCREEN_SCL_PIN;
 
   Serial.begin(115200);
-  stadtpuls.begin(options); // Setup the stadtpuls instance.
+  // stadtpuls.begin(); // Setup the stadtpuls instance with only defaults.
+  stadtpuls.begin(options); // Setup the stadtpuls instance with your options.
   pinMode(PRO_BUTTON_PIN, INPUT);
 }
 

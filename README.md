@@ -30,9 +30,6 @@ Update the code to your liking and add a sensor to your ESP32.
 
 // Create the instance of the Stadtpuls lib
 Stadtpuls stadtpuls; 
-// All options are optional.
-// See the struct `Stadtpuls_Options` in stadtpuls.h
-Stadtpuls_Options options;         
 // keeping track of time
 unsigned long previous_millis = 0;
 // 60 seconds
@@ -40,13 +37,11 @@ unsigned long interval = 60000;
 
 void setup()
 {
-  // Will be used as the sensor name and for the access point
-  options.sensor_name = "Stadtpuls";
-  // For some more information in the Serial monitor
-  options.debug = true;
+
   Serial.begin(115200);
-  // Setup the stadtpuls instance.
-  stadtpuls.begin(options);
+  // Setup the stadtpuls instance with default values. 
+  // See the struct `Stadtpuls_Options` in stadtpuls.h for more information. 
+  stadtpuls.begin();
 }
 
 void loop()
