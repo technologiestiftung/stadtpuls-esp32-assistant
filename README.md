@@ -1,16 +1,26 @@
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Stadtpuls.com ESP32 Assistant
 
 A template repository for ESP32 projects that connect to [stadtpuls.com](https://stadtpuls.com).
+
 ## Prerequisites
 
 - [PlatformIO](https://platformio.org/)
-- currently only tested on [Heltec ESP32-LoRa-V2](https://heltec.org/project/wifi-lora-32/) we might add other ESP32 flavors in the future. It should work with all ESP32 Boards that have WiFi. 
+- currently tested on [Heltec ESP32-LoRa-V2](https://heltec.org/project/wifi-lora-32/) and [Adafruit HUZZAH32 - ESP32 Feather](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/overview). we might add other ESP32 flavors in the future. It should work with all ESP32 Boards that have WiFi.
+
+## Tested boards
+
+| Board Name                        | Works |
+| :-------------------------------- | :---: |
+| Heltec ESP32-LoRa-V2              |   ✓   |
+| Adafruit HUZZAH32 - ESP32 Feather |   ✓   |
 
 ## Installation
 
@@ -23,13 +33,12 @@ pio pkg install
 Create a new repository from this template by hitting "Use this template" button or going to [this url](https://github.com/technologiestiftung/stadtpuls-esp32-assistant/generate).
 Update the code to your liking and add a sensor to your ESP32.
 
-
 ```cpp
 #include <Arduino.h>
 #include "stadtpuls.h"
 
 // Create the instance of the Stadtpuls lib
-Stadtpuls stadtpuls; 
+Stadtpuls stadtpuls;
 // keeping track of time
 unsigned long previous_millis = 0;
 // 60 seconds
@@ -39,8 +48,8 @@ void setup()
 {
 
   Serial.begin(115200);
-  // Setup the stadtpuls instance with default values. 
-  // See the struct `Stadtpuls_Options` in stadtpuls.h for more information. 
+  // Setup the stadtpuls instance with default values.
+  // See the struct `Stadtpuls_Options` in stadtpuls.h for more information.
   stadtpuls.begin();
 }
 
@@ -69,7 +78,7 @@ void loop()
 }
 ```
 
-To get this onto your board you need to run the following commands (with [platformio CLI](https://docs.platformio.org/en/latest/core/) installed). 
+To get this onto your board you need to run the following commands (with [platformio CLI](https://docs.platformio.org/en/latest/core/) installed).
 
 ```bash
 # copy the content of the data folder to the board
@@ -91,14 +100,14 @@ If everything is right your ESP should be able to join your network and send dat
 
 If you need delete the WiFi and stadtpuls.com credentials you can connect the VCC to the `forget_pin` (currently 33) and the ESP will delete the credentials.
 
-
-
 ## Tests
 
 No tests yet. :(
+
 ## Contributing
 
-Please open an issue before creating a pull request. We will add some issues with the tag `good first issue` to mark the things that need to be done. 
+Please open an issue before creating a pull request. We will add some issues with the tag `good first issue` to mark the things that need to be done.
+
 ## Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -120,7 +129,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
 
 ## Credits
 

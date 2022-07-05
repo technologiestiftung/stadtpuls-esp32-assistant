@@ -20,11 +20,12 @@ unsigned long last_debounce_time = 0; // the last time the output pin was toggle
 unsigned long debounce_delay = 50;    // the debounce time; increase if the
 void setup()
 {
+
   options.debug = true;              // Make stadtpuls output some infos to the serial
   options.sensor_name = "Stadtpuls"; // Will be used as the sensor name and for the access point
   options.check_certificate = false; // If you want to check the certificate of the server, set this to true. The cert of api.stadtpuls.com is hardcoded at the moment.
   // options.server = "stadtpuls-api-v3-staging.onrender.com"; // The server to send data to. We use a simple Nodejs echo server on localhost and ngrok.com to make it easier to debug. Remove this and it will use `api.stadtpuls.com`
-  options.use_display = true; // Tell the board to use its display (Available on Heltec LoRa v2 WiFi)
+  options.use_display = false; // Tell the board to use its display (Available on Heltec LoRa v2 WiFi)
   // options.ssid = "Stadtpuls";                     // If you already know your WiFi you can pass it here
   // options.password = "Stadtpuls";                 // If you know your WiFi's passphrase you can pass it here
   // options.sensor_id = "0";                        // The id of your sensor on stadtpuls.com

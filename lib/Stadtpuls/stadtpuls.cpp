@@ -33,14 +33,17 @@ void Stadtpuls::begin()
 }
 void Stadtpuls::begin(Stadtpuls_Options options)
 {
-#if defined(WIFI_LoRa_32_V2)
+// See board identity here https://github.com/MattFryer/Board_Identify/blob/3fd711f15cb752a9e18ab837c9b5773eb4d871e0/src/Board_Identify.h
+#if defined(WIFI_LoRa_32_V2) || defined(WIFI_Kit_32)
 
-  Serial.println("LoRa 32 V2");
-  //  defined( WIFI_Kit_32 ) || defined( WIFI_LoRa_32 )
-#elif
+  Serial.println("WiFi LoRa 32 V2 or WiFi Kit 32");
+  // || defined( WIFI_LoRa_32 )
+#elif defined(ARDUINO_FEATHER_ESP32)
+  Serial.println("ARDUINO_FEATHER_ESP32");
+#else
   Serial.println("Not a LoRa 32 V2 board. Use the library at your own risk.");
   //  defined( WIFI_Kit_32 ) || defined( WIFI_LoRa_32 )
-#warnings "This library is not tested with your board proceed at own risk"
+#warning "This library is not tested with your board proceed at own risk"
 #endif
 
   if (options.debug)
